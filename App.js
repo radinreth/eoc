@@ -7,32 +7,25 @@
  */
 
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
 
-import { createAppContainer } from 'react-navigation'
-import { createStackNavigator } from 'react-navigation-stack';
+import { Database } from '@nozbe/watermelondb'
+import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite'
+import { schema } from './src/models/schema'
+import { dbModels } from './src/models/index.js'
 
-class HomeScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Home Screen</Text>
-      </View>
-    );
-  }
-}
+import { createNavigation } from './src/screens/Navigation'
 
-const AppNavigator = createStackNavigator({
-  Home: {
-    screen: HomeScreen,
-  },
-});
+const adapter = new SQLiteAdapter({
+  dbName: 'eocMobile',
+  schema
+})
 
-export default createAppContainer(AppNavigator);
+const database = new Database({
+  adapter,
+  modelClasses: [dbModels],
+  actionsEnabled: true
+})
+
+const Navigator = createNavigation({ database })
+
+export default Navigator;
